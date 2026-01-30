@@ -1,18 +1,17 @@
-
 let expenses = [];
 
-// FONCTION 1: RÉCUPÉRATION DES DONNÉES
 
+const STORAGE_PREFIX = 'gestionDepenses_';
+const STORAGE_KEY = STORAGE_PREFIX + 'expenses';
 
-/**
- * Récupère les données des dépenses depuis le localStorage
- * Basé sur les recommandations W3Schools et MDN pour localStorage
- */
-function loadExpenses() {
-    // Vérification du support de localStorage (W3Schools recommandation)
+// RÉCUPÉRATION DES DONNÉES
+
+/** Récupère les données des dépenses depuis le localStorage*/
+
+function chargerDepenses() {
     if (typeof(Storage) !== "undefined") {
         try {
-            const storedExpenses = localStorage.getItem('expenses');
+            const storedExpenses = localStorage.getItem(STORAGE_KEY);
             if (storedExpenses) {
                 expenses = JSON.parse(storedExpenses);
             }
@@ -27,85 +26,72 @@ function loadExpenses() {
     return expenses;
 }
 
-/**
- * Sauvegarde les dépenses dans le localStorage
- * Utilise JSON.stringify selon les recommandations W3Schools/MDN
- */
-function saveExpenses() {
+/** Sauvegarde les dépenses dans le localStorage */
+
+function sauvegarderDepenses() {
     try {
-        localStorage.setItem('expenses', JSON.stringify(expenses));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
     } catch (error) {
         console.error('Erreur lors de la sauvegarde des données:', error);
     }
 }
 
-/**
- * Ajoute une nouvelle dépense
- */
-function addExpense(description, amount, category) {
-    const expense = {
-        id: Date.now(), // Identifiant unique basé sur le timestamp
+/** Ajoute une nouvelle dépense */
+
+function ajouterDepense(description, montant, categorie) {
+    const depense = {
+        id: Date.now(), 
         description: description,
-        amount: parseFloat(amount),
-        category: category,
+        amount: parseFloat(montant),
+        category: categorie,
         date: new Date().toLocaleDateString('fr-FR')
     };
     
-    expenses.push(expense);
-    saveExpenses();
-    return expense;
+    expenses.push(depense);
+    sauvegarderDepenses();
+    return depense;
 }
 
-// FONCTION 2: CRÉATION VUE TABULAIRE + MAJ BUDGET
+//  CRÉATION VUE TABULAIRE + MAJ BUDGET
 
-/**
- * Calcule le budget total de toutes les dépenses
- * Utilise Array.reduce() selon la documentation MDN
- */
-function calculateTotalBudget() {
-    // reduce() applique une fonction sur un accumulateur et chaque élément du tableau
-    // pour le réduire à une seule valeur (MDN)
-    return expenses.reduce(function(total, expense) {
-        return total + expense.amount;
+/** Calcule le budget total de toutes les dépenses*/
+
+function calculerTotalBudget() {
+    // Applique une fonction sur un accumulateur et chaque élément du tableau
+    return expenses.reduce(function(total, depense) {
+        return total + depense.amount;
     }, 0); // 0 est la valeur initiale de l'accumulateur
 }
 
-/**
- * Met à jour l'affichage du budget total
- */
-function updateBudgetDisplay() {
-    const total = calculateTotalBudget();
+/** Met à jour l'affichage du budget total */
+function mettreAJourAffichageBudget() {
+    const total = calculerTotalBudget();
     const budgetElement = document.getElementById('totalBudget');
     budgetElement.textContent = `${total.toFixed(2)} €`;
 }
 
-/**
- * Crée une ligne de tableau pour une dépense
- */
-function createExpenseRow(expense) {
-    const row = document.createElement('tr');
-    row.setAttribute('data-id', expense.id);
+/** Crée une ligne de tableau pour une dépense */
+function creerLigneDepense(depense) {
+    const ligne = document.createElement('tr');
+    ligne.setAttribute('data-id', depense.id);
     
-    row.innerHTML = `
-        <td>${expense.description}</td>
-        <td>${expense.category}</td>
-        <td>${expense.amount.toFixed(2)} €</td>
-        <td>${expense.date}</td>
+    ligne.innerHTML = `
+        <td>${depense.description}</td>
+        <td>${depense.category}</td>
+        <td>${depense.amount.toFixed(2)} €</td>
+        <td>${depense.date}</td>
         <td>
-            <button class="delete-btn" onclick="deleteExpense(${expense.id})">
+            <button class="delete-btn" onclick="supprimerDepense(${depense.id})">
                 Supprimer
             </button>
         </td>
     `;
     
-    return row;
+    return ligne;
 }
 
-/**
- * Affiche toutes les dépenses dans le tableau
- * Utilise forEach() pour itérer sur le tableau (MDN)
- */
-function renderExpenseTable() {
+/** Affiche toutes les dépenses dans le tableau */
+function afficherTableauDepenses() {
     const tbody = document.getElementById('expenseTableBody');
     tbody.innerHTML = ''; // Vide le tableau
     
@@ -121,91 +107,75 @@ function renderExpenseTable() {
             </tr>
         `;
     } else {
-        // forEach() exécute une fonction pour chaque élément du tableau (MDN)
-        expenses.forEach(function(expense) {
-            const row = createExpenseRow(expense);
-            tbody.appendChild(row);
+        expenses.forEach(function(depense) {
+            const ligne = creerLigneDepense(depense);
+            tbody.appendChild(ligne);
         });
     }
     
     // Met à jour le budget total
-    updateBudgetDisplay();
+    mettreAJourAffichageBudget();
 }
 
+// GESTION DE LA SUPPRESSION
 
-// FONCTION 3: GESTION DE LA SUPPRESSION
+/** Supprime une dépense par son ID */
 
-/**
- * Supprime une dépense par son ID
- * Utilise Array.filter() selon la documentation MDN
- */
-function deleteExpense(id) {
+function supprimerDepense(id) {
     // Confirmation avant suppression
     if (confirm('Êtes-vous sûr de vouloir supprimer cette dépense ?')) {
         // Filtre les dépenses pour retirer celle avec l'ID correspondant
-        // MDN: filter() crée un nouveau tableau avec les éléments qui passent le test
-        expenses = expenses.filter(function(expense) {
-            return expense.id !== id;
+        expenses = expenses.filter(function(depense) {
+            return depense.id !== id;
         });
         
         // Sauvegarde les modifications
-        saveExpenses();
+        sauvegarderDepenses();
         
         // Rafraîchit l'affichage
-        renderExpenseTable();
+        afficherTableauDepenses();
     }
 }
 
-// GESTION DU FORMULAIRE
+//GESTION DU FORMULAIRE
 
+/** Initialise le gestionnaire d'événements du formulaire */
 
-/**
- * Initialise le gestionnaire d'événements du formulaire
- * Utilise addEventListener() - méthode recommandée par MDN
- */
-function initFormHandler() {
-    const form = document.getElementById('expenseForm');
+function initialiserGestionnaireFormulaire() {
+    const formulaire = document.getElementById('expenseForm');
     
-    // addEventListener() est la méthode recommandée par MDN pour enregistrer des événements
-    // Elle permet d'ajouter plusieurs gestionnaires pour un même événement
-    form.addEventListener('submit', function(event) {
+    // Ajouter plusieurs gestionnaires pour un même événement
+    formulaire.addEventListener('submit', function(event) {
         // preventDefault() empêche le comportement par défaut (rechargement de la page)
         event.preventDefault();
         
         // Récupère les valeurs du formulaire
         const description = document.getElementById('description').value;
-        const amount = document.getElementById('amount').value;
-        const category = document.getElementById('category').value;
+        const montant = document.getElementById('amount').value;
         
         // Ajoute la dépense
-        addExpense(description, amount, category);
+        ajouterDepense(description, montant);
         
         // Rafraîchit l'affichage
-        renderExpenseTable();
+        afficherTableauDepenses();
         
         // Réinitialise le formulaire
-        form.reset();
+        formulaire.reset();
     });
 }
 
 
-// INITIALISATION DE L'APPLICATION
+/** Initialise l'application au chargement de la page */
 
-
-/**
- * Initialise l'application au chargement de la page
- */
-function init() {
+function initialiser() {
     // Charge les dépenses depuis le localStorage
-    loadExpenses();
+    chargerDepenses();
     
     // Affiche les dépenses dans le tableau
-    renderExpenseTable();
+    afficherTableauDepenses();
     
     // Initialise le gestionnaire du formulaire
-    initFormHandler();
+    initialiserGestionnaireFormulaire();
 }
 
-// DOMContentLoaded : événement déclenché quand le DOM est complètement chargé (MDN)
-// C'est le moment idéal pour attacher les gestionnaires d'événements
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', initialiser);
