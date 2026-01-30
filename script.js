@@ -1,23 +1,42 @@
+
 let expenses = [];
 
 // FONCTION 1: RÉCUPÉRATION DES DONNÉES
 
+
 /**
  * Récupère les données des dépenses depuis le localStorage
+ * Basé sur les recommandations W3Schools et MDN pour localStorage
  */
 function loadExpenses() {
-    const storedExpenses = localStorage.getItem('expenses');
-    if (storedExpenses) {
-        expenses = JSON.parse(storedExpenses);
+    // Vérification du support de localStorage (W3Schools recommandation)
+    if (typeof(Storage) !== "undefined") {
+        try {
+            const storedExpenses = localStorage.getItem('expenses');
+            if (storedExpenses) {
+                expenses = JSON.parse(storedExpenses);
+            }
+        } catch (error) {
+            console.error('Erreur lors du chargement des données:', error);
+            expenses = [];
+        }
+    } else {
+        console.warn('localStorage non supporté par ce navigateur');
+        expenses = [];
     }
     return expenses;
 }
 
 /**
  * Sauvegarde les dépenses dans le localStorage
+ * Utilise JSON.stringify selon les recommandations W3Schools/MDN
  */
 function saveExpenses() {
-    localStorage.setItem('expenses', JSON.stringify(expenses));
+    try {
+        localStorage.setItem('expenses', JSON.stringify(expenses));
+    } catch (error) {
+        console.error('Erreur lors de la sauvegarde des données:', error);
+    }
 }
 
 /**
@@ -41,9 +60,14 @@ function addExpense(description, amount, category) {
 
 /**
  * Calcule le budget total de toutes les dépenses
+ * Utilise Array.reduce() selon la documentation MDN
  */
 function calculateTotalBudget() {
-    return expenses.reduce((total, expense) => total + expense.amount, 0);
+    // reduce() applique une fonction sur un accumulateur et chaque élément du tableau
+    // pour le réduire à une seule valeur (MDN)
+    return expenses.reduce(function(total, expense) {
+        return total + expense.amount;
+    }, 0); // 0 est la valeur initiale de l'accumulateur
 }
 
 /**
@@ -69,7 +93,7 @@ function createExpenseRow(expense) {
         <td>${expense.date}</td>
         <td>
             <button class="delete-btn" onclick="deleteExpense(${expense.id})">
-                Supprimer
+                🗑️ Supprimer
             </button>
         </td>
     `;
@@ -79,6 +103,7 @@ function createExpenseRow(expense) {
 
 /**
  * Affiche toutes les dépenses dans le tableau
+ * Utilise forEach() pour itérer sur le tableau (MDN)
  */
 function renderExpenseTable() {
     const tbody = document.getElementById('expenseTableBody');
@@ -90,14 +115,15 @@ function renderExpenseTable() {
             <tr class="empty-state">
                 <td colspan="5">
                     <div>
-                    
+                        <p>📋</p>
+                        <p>Aucune dépense enregistrée</p>
                     </div>
                 </td>
             </tr>
         `;
     } else {
-        // Affiche chaque dépense
-        expenses.forEach(expense => {
+        // forEach() exécute une fonction pour chaque élément du tableau (MDN)
+        expenses.forEach(function(expense) {
             const row = createExpenseRow(expense);
             tbody.appendChild(row);
         });
@@ -112,12 +138,16 @@ function renderExpenseTable() {
 
 /**
  * Supprime une dépense par son ID
+ * Utilise Array.filter() selon la documentation MDN
  */
 function deleteExpense(id) {
     // Confirmation avant suppression
     if (confirm('Êtes-vous sûr de vouloir supprimer cette dépense ?')) {
         // Filtre les dépenses pour retirer celle avec l'ID correspondant
-        expenses = expenses.filter(expense => expense.id !== id);
+        // MDN: filter() crée un nouveau tableau avec les éléments qui passent le test
+        expenses = expenses.filter(function(expense) {
+            return expense.id !== id;
+        });
         
         // Sauvegarde les modifications
         saveExpenses();
@@ -129,14 +159,19 @@ function deleteExpense(id) {
 
 // GESTION DU FORMULAIRE
 
+
 /**
  * Initialise le gestionnaire d'événements du formulaire
+ * Utilise addEventListener() - méthode recommandée par MDN
  */
 function initFormHandler() {
     const form = document.getElementById('expenseForm');
     
-    form.addEventListener('submit', function(e) {
-        e.preventDefault(); // Empêche le rechargement de la page
+    // addEventListener() est la méthode recommandée par MDN pour enregistrer des événements
+    // Elle permet d'ajouter plusieurs gestionnaires pour un même événement
+    form.addEventListener('submit', function(event) {
+        // preventDefault() empêche le comportement par défaut (rechargement de la page)
+        event.preventDefault();
         
         // Récupère les valeurs du formulaire
         const description = document.getElementById('description').value;
@@ -154,7 +189,9 @@ function initFormHandler() {
     });
 }
 
+
 // INITIALISATION DE L'APPLICATION
+
 
 /**
  * Initialise l'application au chargement de la page
@@ -170,5 +207,6 @@ function init() {
     initFormHandler();
 }
 
-// Lance l'initialisation quand le DOM est prêt
+// DOMContentLoaded : événement déclenché quand le DOM est complètement chargé (MDN)
+// C'est le moment idéal pour attacher les gestionnaires d'événements
 document.addEventListener('DOMContentLoaded', init);
