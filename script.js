@@ -1,6 +1,6 @@
 let expenses = [];
 
-function loadExpenses() {
+function chargerDepenses() {
     if (typeof(Storage) !== "undefined") {
         try {
             const storedExpenses = localStorage.getItem('expenses');
@@ -17,7 +17,7 @@ function loadExpenses() {
     return expenses;
 }
 
-function saveExpenses() {
+function sauvegarderDepenses() {
     try {
         localStorage.setItem('expenses', JSON.stringify(expenses));
     } catch (error) {
@@ -25,50 +25,50 @@ function saveExpenses() {
     }
 }
 
-function addExpense(description, amount) {
-    const expense = {
+function ajouterDepense(description, montant) {
+    const depense = {
         id: Date.now(),
         description: description,
-        amount: parseFloat(amount),
+        amount: parseFloat(montant),
         date: new Date().toLocaleDateString('fr-FR')
     };
     
-    expenses.push(expense);
-    saveExpenses();
-    return expense;
+    expenses.push(depense);
+    sauvegarderDepenses();
+    return depense;
 }
 
-function calculateTotalBudget() {
-    return expenses.reduce(function(total, expense) {
-        return total + expense.amount;
+function calculerTotalBudget() {
+    return expenses.reduce(function(total, depense) {
+        return total + depense.amount;
     }, 0);
 }
 
-function updateBudgetDisplay() {
-    const total = calculateTotalBudget();
+function mettreAJourAffichageBudget() {
+    const total = calculerTotalBudget();
     const budgetElement = document.getElementById('totalBudget');
     budgetElement.textContent = `${total.toFixed(2)} €`;
 }
 
-function createExpenseRow(expense) {
-    const row = document.createElement('tr');
-    row.setAttribute('data-id', expense.id);
+function creerLigneDepense(depense) {
+    const ligne = document.createElement('tr');
+    ligne.setAttribute('data-id', depense.id);
     
-    row.innerHTML = `
-        <td>${expense.description}</td>
-        <td>${expense.amount.toFixed(2)} €</td>
-        <td>${expense.date}</td>
+    ligne.innerHTML = `
+        <td>${depense.description}</td>
+        <td>${depense.amount.toFixed(2)} €</td>
+        <td>${depense.date}</td>
         <td>
-            <button class="btn-delete" onclick="deleteExpense(${expense.id})">
+            <button class="btn-delete" onclick="supprimerDepense(${depense.id})">
                 Supprimer
             </button>
         </td>
     `;
     
-    return row;
+    return ligne;
 }
 
-function renderExpenseTable() {
+function afficherTableauDepenses() {
     const tbody = document.getElementById('expenseTableBody');
     tbody.innerHTML = ''; 
     
@@ -83,45 +83,45 @@ function renderExpenseTable() {
             </tr>
         `;
     } else {
-        expenses.forEach(function(expense) {
-            const row = createExpenseRow(expense);
-            tbody.appendChild(row);
+        expenses.forEach(function(depense) {
+            const ligne = creerLigneDepense(depense);
+            tbody.appendChild(ligne);
         });
     }
     
-    updateBudgetDisplay();
+    mettreAJourAffichageBudget();
 }
 
-function deleteExpense(id) {
+function supprimerDepense(id) {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette dépense ?')) {
-        expenses = expenses.filter(function(expense) {
-            return expense.id !== id;
+        expenses = expenses.filter(function(depense) {
+            return depense.id !== id;
         });
         
-        saveExpenses();
-        renderExpenseTable();
+        sauvegarderDepenses();
+        afficherTableauDepenses();
     }
 }
 
-function initFormHandler() {
-    const form = document.getElementById('expenseForm');
+function initialiserGestionnaireFormulaire() {
+    const formulaire = document.getElementById('expenseForm');
     
-    form.addEventListener('submit', function(event) {
+    formulaire.addEventListener('submit', function(event) {
         event.preventDefault();
         
         const description = document.getElementById('description').value;
-        const amount = document.getElementById('amount').value;
+        const montant = document.getElementById('amount').value;
         
-        addExpense(description, amount);
-        renderExpenseTable();
-        form.reset();
+        ajouterDepense(description, montant);
+        afficherTableauDepenses();
+        formulaire.reset();
     });
 }
 
-function init() {
-    loadExpenses();
-    renderExpenseTable();
-    initFormHandler();
+function initialiser() {
+    chargerDepenses();
+    afficherTableauDepenses();
+    initialiserGestionnaireFormulaire();
 }
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', initialiser);
