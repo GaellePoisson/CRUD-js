@@ -8,7 +8,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>💰 Gestionnaire de Dépenses</h1>
+            <h1>Gestionnaire de Dépenses</h1>
             <div class="budget-display">
                 Budget Total: <span id="totalBudget">0.00 €</span>
             </div>
@@ -26,19 +26,6 @@
                     <label for="amount">Montant (€)</label>
                     <input type="number" id="amount" step="0.01" placeholder="0.00" required>
                 </div>
-                
-                <div class="form-group">
-                    <label for="category">Catégorie</label>
-                    <select id="category" required>
-                        <option value="">-- Sélectionner --</option>
-                        <option value="Alimentation">Alimentation</option>
-                        <option value="Transport">Transport</option>
-                        <option value="Loisirs">Loisirs</option>
-                        <option value="Santé">Santé</option>
-                        <option value="Autres">Autres</option>
-                    </select>
-                </div>
-                
                 <button type="submit">Ajouter la dépense</button>
             </form>
         </div>
@@ -49,7 +36,6 @@
                 <thead>
                     <tr>
                         <th>Description</th>
-                        <th>Catégorie</th>
                         <th>Montant</th>
                         <th>Date</th>
                         <th>Action</th>
@@ -59,7 +45,6 @@
                     <tr class="empty-state">
                         <td colspan="5">
                             <div>
-                                <p>📋</p>
                                 <p>Aucune dépense enregistrée</p>
                             </div>
                         </td>

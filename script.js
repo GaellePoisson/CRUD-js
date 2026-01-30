@@ -93,7 +93,7 @@ function createExpenseRow(expense) {
         <td>${expense.date}</td>
         <td>
             <button class="delete-btn" onclick="deleteExpense(${expense.id})">
-                🗑️ Supprimer
+                Supprimer
             </button>
         </td>
     `;
@@ -115,7 +115,6 @@ function renderExpenseTable() {
             <tr class="empty-state">
                 <td colspan="5">
                     <div>
-                        <p>📋</p>
                         <p>Aucune dépense enregistrée</p>
                     </div>
                 </td>
