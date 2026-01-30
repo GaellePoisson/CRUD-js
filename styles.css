@@ -1,4 +1,4 @@
-/* --- Variables globales (pour changer les couleurs facilement) --- */
+/* --- Variables globales --- */
 :root {
     --primary-color: #2563eb;    /* Bleu pour les actions principales */
     --danger-color: #dc2626;     /* Rouge pour supprimer */
@@ -8,9 +8,8 @@
     --border-radius: 8px;        /* Arrondi des coins */
 }
 
-/* --- Reset de base pour nettoyer les styles par défaut --- */
 * {
-    box-sizing: border-box; /* Permet de mieux gérer les largeurs */
+    box-sizing: border-box; 
     margin: 0;
     padding: 0;
 }
@@ -23,20 +22,20 @@ body {
     padding: 20px;
 }
 
-/* --- Le conteneur principal (La carte blanche au centre) --- */
+/* --- Le conteneur principal --- */
 .container {
-    max-width: 800px; /* Largeur max pour ne pas que ce soit trop étiré */
-    margin: 0 auto;   /* Centre le bloc horizontalement */
+    max-width: 800px; 
+    margin: 0 auto;   
     background-color: var(--card-bg);
     padding: 30px;
     border-radius: var(--border-radius);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Petite ombre légère */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
 }
 
 /* --- En-tête et Budget --- */
 header {
-    display: flex; /* Met le titre et le total sur la même ligne */
-    justify-content: space-between; /* Écarte les deux éléments */
+    display: flex; 
+    justify-content: space-between; 
     align-items: center;
     border-bottom: 2px solid #e5e7eb;
     padding-bottom: 20px;
@@ -54,7 +53,7 @@ h1 {
 }
 
 #totalBudget {
-    color: #059669; /* Vert pour l'argent */
+    color: #059669;  
     font-size: 1.4rem;
 }
 
@@ -76,7 +75,7 @@ h1 {
 }
 
 label {
-    display: block; /* Force le label à être au-dessus de l'input */
+    display: block; 
     margin-bottom: 5px;
     font-weight: 500;
 }
@@ -100,17 +99,17 @@ button[type="submit"] {
     border-radius: var(--border-radius);
     font-size: 1rem;
     cursor: pointer;
-    transition: background-color 0.3s; /* Animation douce au survol */
+    transition: background-color 0.3s; 
 }
 
 button[type="submit"]:hover {
-    background-color: #1d4ed8; /* Bleu un peu plus foncé */
+    background-color: #1d4ed8; 
 }
 
 /* --- Section Tableau --- */
 table {
     width: 100%;
-    border-collapse: collapse; /* Enlève les espaces entre les cellules */
+    border-collapse: collapse; 
     margin-top: 10px;
 }
 
@@ -133,8 +132,7 @@ th, td {
     padding: 30px;
 }
 
-/* --- Bouton Supprimer (Généré par JS) --- */
-/* Important : Utilise cette classe dans ton JS lors de la création du bouton */
+/* --- Bouton Supprimer (--- */
 .btn-delete {
     background-color: var(--danger-color);
     color: white;
